@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simple Turn-Based Tracker</title>
+
+  <!-- All your CSS styling goes here -->
+  <style>
+    :root {
+      --bg: #0f1220;
+      --panel: #171a2b;
+      --panel-2: #1f2340;
+      --text: #e7e9f4;
+      --muted: #a7adc7;
+      --accent: #7aa2ff;
+      --good: #35d49a;
+      --warn: #ffb454;
+      --bad: #ff6b6b;
+      --line: rgba(255,255,255,0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 12px;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg); color: var(--text);
+    }
+    .app {
+      display: grid;
+      grid-template-columns: 330px 1fr;
+      gap: 12px;
+      min-height: 92vh;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+    }
+    h2, h3 { margin: 0 0 8px 0; }
+    h2 { font-size: 18px; }
+    h3 { font-size: 14px; color: var(--muted); font-weight: 600; letter-spacing: .03em; }
+
+    .row { display: flex; gap: 8px; align-items: center; }
+    .row.wrap { flex-wrap: wrap; }
+    label { font-size: 12px; color: var(--muted); }
+
+    input[type="text"], select {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      color: var(--text);
+      outline: none;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      color: var(--text);
+      padding: 7px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .list { display: grid; gap: 6px; max-height: 38vh; overflow: auto; }
+
+    .entity {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px;
+    }
+
+    .pill { 
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      font-weight: 800;
+    }
+
+    .pill.player { color: #bfe1ff; }
+    .pill.enemy { color: #ffd1d1; }
+
+    .turn-card { display: grid; gap: 10px; }
+    .big { font-size: 22px; font-weight: 900; }
+  </style>
+</head>
+
+<body>
+  <!-- Your interface stays the same -->
+  <div class="app">
+    <div class="card">
+      <h2>Setup</h2>
+      <div style="display:grid; gap:8px;">
+        <label>Add entity</label>
+        <div class="row">
+          <input id="nameInput" type="text" placeholder="Name (e.g., Liam, Wolf)" />
+        </div>
+        <div class="row" style="margin-top:6px;">
+          <select id="typeInput">
+            <option value="player">Player</option>
+            <option value="enemy">Enemy</option>
+          </select>
+          <button id="addBtn" class="primary">Add</button>
+        </div>
+
+        <div class="row wrap">
+          <label>
+            <input type="checkbox" id="groupMode" />
+            Group actions mode
+          </label>
+        </div>
+
+        <div class="row wrap">
+          <button id="startBtn" class="good">Start / Restart</button>
+          <button id="nextBtn" class="primary">Force Next Turn</button>
+          <button id="resetBtn" class="bad">Reset All</button>
+        </div>
+
+        <div>
+          <h3>Turn order</h3>
+          <div id="entityList" class="list"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card turn-card">
+      <h2>Current Turn</h2>
+      <div id="phaseLabel" class="muted"></div>
+
+      <div class="card" style="background:transparent;border-style:dashed;">
+        <div class="big" id="currentName">—</div>
+        <div class="row">
+          <span id="currentType" class="pill">—</span>
+          <span class="muted">Round: <b id="roundNum">1</b></span>
+        </div>
+
+        <div class="row wrap">
+          <button id="moveBtn" class="good">Use Move</button>
+          <button id="actionBtn" class="primary">Use Action</button>
+          <button id="skipMoveBtn" class="ghost">Skip Move</button>
+          <button id="skipActionBtn" class="ghost">End Turn</button>
+        </div>
+      </div>
+
+      <h3>Next 3 turns</h3>
+      <div id="queue" class="queue"></div>
+
+      <h3>Log</h3>
+      <div id="log" class="log"></div>
+    </div>
+  </div>
+
+  <!-- IMPORTANT: Load your JS file -->
+  <script src="script.js"></script>
+</body>
+</html>
